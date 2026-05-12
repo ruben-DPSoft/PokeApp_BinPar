@@ -2,6 +2,8 @@
 
 > Prueba técnica para **BinPar** — Pokédex moderna sobre **Next.js 14 (App Router)**, **TypeScript estricto**, **Tailwind CSS** y **Zustand**, consumiendo en tiempo real la [PokéAPI](https://pokeapi.co/).
 
+**Demo en vivo:** [pokeapp-rubenrganga.vercel.app](https://pokeapp-rubenrganga.vercel.app/) — desplegada en **Vercel**.
+
 Más allá del enunciado: **tres modos de visualización** (Cards TCG con paralaje 3D, Tabla densa, Pokédex con marcado de capturados + estadísticas en vivo), **comparador** de dos Pokémon con radar chart (Recharts) y barras, **mini-juego** "¿Quién es ese Pokémon?" con tres modos y tolerancia a typos (Levenshtein), **tema claro/oscuro** con anti-flash, **i18n ES/EN** sin librerías (incluidos los triggers de evolución, p. ej. "Piedra Agua" / "Water Stone"), búsqueda por nombre con expansión a línea evolutiva **y por número**, filtros **multi-select** con efecto neón, **habilidades y movimientos iniciales localizados** en el detalle con tooltips propios compatibles con táctil, **suite de tests** (26 unit tests con Vitest sobre lógica pura), y 100% responsive.
 
 ---
@@ -10,6 +12,7 @@ Más allá del enunciado: **tres modos de visualización** (Cards TCG con parala
 
 - [Funcionalidades](#funcionalidades)
 - [Stack](#stack)
+- [Despliegue](#despliegue)
 - [Cómo ejecutarlo](#cómo-ejecutarlo)
 - [Tests](#tests)
 - [Estructura](#estructura)
@@ -143,6 +146,19 @@ Más allá del enunciado: **tres modos de visualización** (Cards TCG con parala
 | **Testing**       | Vitest + `@vitejs/plugin-react`                  | Soporte TS sin transform, sintaxis 1:1 con Jest, arranque rápido. Tests sobre lógica pura (sin renderizar React).                                                   |
 
 Más profundo en [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) y [`docs/DESIGN.md`](docs/DESIGN.md).
+
+---
+
+## Despliegue
+
+La aplicación está desplegada en **Vercel** (la plataforma de los creadores de Next.js, integración nativa con App Router, RSC y `revalidate`).
+
+- **URL de producción**: [https://pokeapp-rubenrganga.vercel.app/](https://pokeapp-rubenrganga.vercel.app/)
+- **CI/CD**: cada push a `main` dispara un build automático en Vercel; los PRs generan **preview deployments** con URL propia.
+- **Build command**: `npm run build` · **Output**: `.next` (serverless + edge, según ruta).
+- **Cache**: `fetch` con `next: { revalidate: 86400 }` en server → respuestas de PokéAPI cacheadas 24 h en la edge de Vercel, dedupe en cliente con SWR.
+
+> Tip: la primera carga construye el índice de 1025 Pokémon en memoria (~19 fetches). En producción esos fetches viajan por la CDN de Vercel con cache HTTP, así que las siguientes visitas son prácticamente instantáneas.
 
 ---
 
